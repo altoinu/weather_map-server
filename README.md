@@ -1,6 +1,6 @@
-# base_nodejs_express_project-20241224
+# weather_map-server
 
-Sample basic Node.js server project setup with Express and some dev dependencies
+Detroit Labs coding challenge - simple weather forecast application. Backend Node.js server
 
 ## Writing README stuff
 

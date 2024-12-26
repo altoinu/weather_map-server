@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "base_nodejs_express_project-20241224",
+      name: "weather_map-server",
       script: "src/index.mjs",
 
       //'exec_mode': 'fork',
