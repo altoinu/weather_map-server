@@ -281,7 +281,11 @@ function createServer(config) {
   // eslint-disable-next-line no-unused-vars
   app.use(/.+\.json\??.*/, (err, req, res, next) => {
     let errorObj = createErrorReturnObj(err);
-    if (isDevEnv()) errorObj.error = errorObj.error.stack;
+    if (isDevEnv())
+      errorObj.error = {
+        status: errorObj.error.status,
+        stack: errorObj.error.stack,
+      };
 
     res.json(errorObj);
   });
