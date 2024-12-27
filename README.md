@@ -50,7 +50,7 @@ pm2 startOrRestart [ecosystem config file].js
 - [PM2 cluster mode](http://pm2.keymetrics.io/docs/usage/cluster-mode)
 - Immediately shuts down currently running process and then starts new one.
   - Causes this too-
-    - App [app_name] with id [0] and pid [20743], exited with code [100] via signal [SIGINT]
+    - App \[app_name\] with id \[0\] and pid \[20743\], exited with code \[100\] via signal \[SIGINT\]
 
 ## To reload:
 
@@ -82,7 +82,7 @@ As of pm2 -v 3.5.1
 - --update-env option doesn't seem to be working as it should
   - [https://github.com/Unitech/pm2/issues/3796](https://github.com/Unitech/pm2/issues/3796)
 - watch: true does not update env that were changed in config .js/json
-  - need to manually do pm2 startOrGracefulReload [ecosystem config file].js
+  - need to manually do pm2 startOrGracefulReload \[ecosystem config file\].js
 - Manual restart/reload/gracefulReload causes env to be updated to whatever is in config .js/json
   - However if env var is removed from .js/json, it still remains in process.env and gets loaded.
     Not sure if this is pm2/node bug or just the way things are. - To prevent this, do pm2 delete to completely remove then pm2 start
