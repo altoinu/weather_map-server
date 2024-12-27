@@ -22,6 +22,7 @@ const corsAllowOrigin = getEnv("CORS_ALLOW_ORIGIN");
  * @link https://github.com/motdotla/dotenv
  */
 const ENV = {
+  apiKey: getEnv("OPEN_WEATHER_MAP_API_KEY"),
   env: getEnv("NODE_ENV") || DEFAULT_VALUES.env,
   corsAllowOrigin: corsAllowOrigin ? JSON.parse(corsAllowOrigin) : [],
   port: getEnv("PORT") || "3000",
