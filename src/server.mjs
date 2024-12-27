@@ -1,6 +1,7 @@
 import ENV from "./env.mjs";
 import CORS from "./middleware/CORS.mjs";
 import configRoute from "./routes/configRoute.mjs";
+import openWeatherMapRouter from "./routes/openWeatherMap.mjs";
 import createServer from "./utils/createServer.mjs";
 import bodyParser from "body-parser";
 import cluster from "cluster";
@@ -66,6 +67,9 @@ function createAndStartServer() {
       cors.allow,
       {
         middleware: configRoute,
+      },
+      {
+        middleware: openWeatherMapRouter,
       },
     ],
   });
