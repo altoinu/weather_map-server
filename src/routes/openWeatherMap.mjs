@@ -52,7 +52,7 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
         500,
       );
 
-    const jsonResponse = fetchResponse.json();
+    const jsonResponse = await fetchResponse.json();
 
     res.status(200);
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -90,7 +90,7 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
         500,
       );
 
-    const jsonResponse = fetchResponse.json();
+    const jsonResponse = await fetchResponse.json();
 
     res.status(200);
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
