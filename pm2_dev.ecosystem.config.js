@@ -25,7 +25,7 @@ module.exports = {
       //'ignore_watch': [],
       env: {
         NODE_ENV: "development",
-        PORT: 3000,
+        PORT: 4000,
         CORS_ALLOW_ORIGIN: ["http://localhost", "http://localhost:3000"],
       },
     },
