@@ -1,7 +1,9 @@
 /**
  * Function to create Express app and server
- * @module app_base
+ * @module createServer
  * @version 2.0.0 2024-12-25
+ * @requires module:CONSTANTS
+ * @requires module:ENV
  * @requires express
  * @requires morgan
  *
