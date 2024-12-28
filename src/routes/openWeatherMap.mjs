@@ -1,8 +1,14 @@
 import ENV from "../env.mjs";
 import RouteError from "../types/RouteError.mjs";
+import axios from "axios";
 import express from "express";
 
 const openWeatherMapRouter = express.Router();
+
+const OPEN_WEATHER_MAP_API_BASE_URL = "http://api.openweathermap.org/data/2.5/";
+const openWeatherMapAPI = axios.create({
+  baseURL: OPEN_WEATHER_MAP_API_BASE_URL,
+});
 
 /**
  * @api {get} /currentWeather.json Get current weather
@@ -74,7 +80,7 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
 
     // https://openweathermap.org/current
     // api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-    const url = new URL("http://api.openweathermap.org/data/2.5/weather");
+    const url = new URL(OPEN_WEATHER_MAP_API_BASE_URL + "weather");
     const params = {
       appid: ENV.apiKey,
       lat: req.query.lat,
@@ -83,6 +89,7 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
     };
     url.search = new URLSearchParams(params).toString();
 
+    /* For some reason Node.js fetch seems to fail often... going with axios for now
     const fetchResponse = await fetch(url, {
       method: "GET",
     });
@@ -94,6 +101,15 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
       );
 
     const jsonResponse = await fetchResponse.json();
+    */
+
+    const fetchResponse = await openWeatherMapAPI.get("weather", {
+      method: "GET",
+      params,
+      responseType: "json",
+    });
+
+    const jsonResponse = fetchResponse.data;
 
     res.status(200);
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -189,7 +205,7 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
 
     // https://openweathermap.org/forecast5
     // api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
-    const url = new URL("http://api.openweathermap.org/data/2.5/forecast");
+    const url = new URL(OPEN_WEATHER_MAP_API_BASE_URL + "forecast");
     const params = {
       appid: ENV.apiKey,
       lat: lat,
@@ -198,6 +214,7 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
     };
     url.search = new URLSearchParams(params).toString();
 
+    /* For some reason Node.js fetch seems to fail often... going with axios for now
     const fetchResponse = await fetch(url, {
       method: "GET",
     });
@@ -209,6 +226,15 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
       );
 
     const jsonResponse = await fetchResponse.json();
+    */
+
+    const fetchResponse = await openWeatherMapAPI.get("forecast", {
+      method: "GET",
+      params,
+      responseType: "json",
+    });
+
+    const jsonResponse = fetchResponse.data;
 
     res.status(200);
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
