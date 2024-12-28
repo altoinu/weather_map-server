@@ -1,4 +1,5 @@
 import ENV from "../env.mjs";
+import RouteError from "../types/RouteError.mjs";
 import { getENVConstants } from "../utils/utils.mjs";
 import express from "express";
 
@@ -83,6 +84,27 @@ configRoute.get("/config.json", (req, res) => {
   if (Object.prototype.hasOwnProperty.call(req.query, "callback"))
     res.jsonp(configValues);
   else res.json(configValues);
+});
+
+/**
+ * @api {get} /error.json RouteError example route
+ * @apiVersion 0.0.1
+ * @apiName DoError
+ * @apiGroup Config
+ * @apiDescription Returns 500 error.
+ *
+ * @apiParam {String} [callback] callback function for jsonp response
+ *
+ * @apiExample {curl} Example usage:
+ *    curl -i http://localhost/error.json
+ *
+ */
+configRoute.get("/error.json", (req, res, next) => {
+  try {
+    throw new RouteError("This is error message.", 500);
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default configRoute;
