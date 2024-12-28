@@ -1,5 +1,5 @@
 import ENV from "../env.mjs";
-import RouteError from "../models/RouteError.mjs";
+import RouteError from "../types/RouteError.mjs";
 import express from "express";
 
 const openWeatherMapRouter = express.Router();
