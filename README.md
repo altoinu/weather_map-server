@@ -17,6 +17,19 @@ Detroit Labs coding challenge - simple weather forecast application. Backend Nod
 npm install
 ```
 
+### Environment variables
+
+Set following values via <code>.env</code>
+
+```
+# Array of origins to allow in CORS, JSON format
+CORS_ALLOW_ORIGIN=["http://localhost", "http://localhost:3000"]
+# Port number to listen to.
+PORT=4000
+# API key obtained from Open Weather Map
+OPEN_WEATHER_MAP_API_KEY=XXXXXX
+```
+
 ## To run
 
 ```
@@ -25,19 +38,8 @@ node src/index.mjs
 
 ...then try accessing one of defined routes:
 
-- [http://localhost:3000/getip.json](http://localhost:3000/getip.json)
-- [http://localhost:3000/config.json](http://localhost:3000/config.json)
-
-## Optional environment variables
-
-Set following values via <code>.env</code>
-
-```
-# Array of origins to allow in CORS, JSON format
-CORS_ALLOW_ORIGIN=["http://localhost", "http://localhost:3000"]
-# Port number to listen to. Default 3000
-PORT=3000
-```
+- [http://localhost:4000/getip.json](http://localhost:4000/getip.json)
+- [http://localhost:4000/config.json](http://localhost:4000/config.json)
 
 ## To start/restart:
 
