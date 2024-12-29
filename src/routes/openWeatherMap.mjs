@@ -1,5 +1,6 @@
 import ENV from "../env.mjs";
 import RouteError from "../types/RouteError.mjs";
+import { retryApiCall } from "../utils/utils.mjs";
 import axios from "axios";
 import express from "express";
 
@@ -8,6 +9,9 @@ const openWeatherMapRouter = express.Router();
 const OPEN_WEATHER_MAP_API_BASE_URL = "http://api.openweathermap.org/data/2.5/";
 const openWeatherMapAPI = axios.create({
   baseURL: OPEN_WEATHER_MAP_API_BASE_URL,
+  timeout: 0,
+  maxContentLength: 200000,
+  maxBodyLength: 200000,
 });
 
 /**
@@ -103,11 +107,21 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
     const jsonResponse = await fetchResponse.json();
     */
 
+    /*
     const fetchResponse = await openWeatherMapAPI.get("weather", {
       method: "GET",
       params,
       responseType: "json",
     });
+    */
+
+    const fetchResponse = await retryApiCall(() =>
+      openWeatherMapAPI.get("weather", {
+        method: "GET",
+        params,
+        responseType: "json",
+      }),
+    );
 
     const jsonResponse = fetchResponse.data;
 
@@ -228,11 +242,21 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
     const jsonResponse = await fetchResponse.json();
     */
 
+    /*
     const fetchResponse = await openWeatherMapAPI.get("forecast", {
       method: "GET",
       params,
       responseType: "json",
     });
+    */
+
+    const fetchResponse = await retryApiCall(() =>
+      openWeatherMapAPI.get("forecast", {
+        method: "GET",
+        params,
+        responseType: "json",
+      }),
+    );
 
     const jsonResponse = fetchResponse.data;
 
