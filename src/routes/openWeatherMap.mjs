@@ -93,28 +93,8 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
     };
     url.search = new URLSearchParams(params).toString();
 
-    /* For some reason Node.js fetch seems to fail often... going with axios for now
-    const fetchResponse = await fetch(url, {
-      method: "GET",
-    });
-
-    if (!fetchResponse.ok)
-      throw new RouteError(
-        "Error getting current weather: " + fetchResponse.body,
-        500,
-      );
-
-    const jsonResponse = await fetchResponse.json();
-    */
-
-    /*
-    const fetchResponse = await openWeatherMapAPI.get("weather", {
-      method: "GET",
-      params,
-      responseType: "json",
-    });
-    */
-
+    // For some reason http request sometimes fails with ETIMEDOUT error
+    // so retrying until success
     const fetchResponse = await retryApiCall(() =>
       openWeatherMapAPI.get("weather", {
         method: "GET",
@@ -228,28 +208,8 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
     };
     url.search = new URLSearchParams(params).toString();
 
-    /* For some reason Node.js fetch seems to fail often... going with axios for now
-    const fetchResponse = await fetch(url, {
-      method: "GET",
-    });
-
-    if (!fetchResponse.ok)
-      throw new RouteError(
-        "Error getting 5 day weather: " + fetchResponse.body,
-        500,
-      );
-
-    const jsonResponse = await fetchResponse.json();
-    */
-
-    /*
-    const fetchResponse = await openWeatherMapAPI.get("forecast", {
-      method: "GET",
-      params,
-      responseType: "json",
-    });
-    */
-
+    // For some reason http request sometimes fails with ETIMEDOUT error
+    // so retrying until success
     const fetchResponse = await retryApiCall(() =>
       openWeatherMapAPI.get("forecast", {
         method: "GET",
