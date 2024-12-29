@@ -44,3 +44,19 @@ export function getFileExtension(contentType) {
 
   return "";
 }
+
+export async function retryApiCall(apiCall, maxRetries = 3, delay = 1000) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await apiCall();
+      return response; // Success!
+    } catch (error) {
+      console.error(
+        `Attempt ${i + 1} failed. Retrying in ${delay}ms...`,
+        error,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error(`Failed after ${maxRetries} retries.`);
+}
