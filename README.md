@@ -41,7 +41,7 @@ node src/index.mjs
 - [http://localhost:4000/getip.json](http://localhost:4000/getip.json)
 - [http://localhost:4000/config.json](http://localhost:4000/config.json)
 
-## To start/restart:
+## To start/restart with PM2:
 
 ```
 pm2 start [ecosystem config file].js
