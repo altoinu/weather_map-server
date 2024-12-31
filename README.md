@@ -1,6 +1,8 @@
 # weather_map-server
 
-Detroit Labs coding challenge - simple weather forecast application. Backend Node.js server
+Detroit Labs coding challenge - simple weather forecast application - Backend Node.js server
+
+This is a Node.js backend server to provide API to be used with weather forecast application [altoinu/weather_map-client](https://github.com/altoinu/weather_map-client).
 
 ## Writing README stuff
 
