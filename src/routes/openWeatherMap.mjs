@@ -84,14 +84,12 @@ openWeatherMapRouter.get("/currentWeather.json", async (req, res, next) => {
 
     // https://openweathermap.org/current
     // api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-    const url = new URL(OPEN_WEATHER_MAP_API_BASE_URL + "weather");
     const params = {
       appid: ENV.apiKey,
       lat: req.query.lat,
       lon: req.query.lon,
       units: "imperial",
     };
-    url.search = new URLSearchParams(params).toString();
 
     // For some reason http request sometimes fails with ETIMEDOUT error
     // so retrying until success
@@ -199,14 +197,12 @@ openWeatherMapRouter.get("/5DayWeather.json", async (req, res, next) => {
 
     // https://openweathermap.org/forecast5
     // api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
-    const url = new URL(OPEN_WEATHER_MAP_API_BASE_URL + "forecast");
     const params = {
       appid: ENV.apiKey,
       lat: lat,
       lon: lon,
       units: "imperial",
     };
-    url.search = new URLSearchParams(params).toString();
 
     // For some reason http request sometimes fails with ETIMEDOUT error
     // so retrying until success
