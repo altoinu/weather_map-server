@@ -114,14 +114,15 @@ export const VERSION = "2.0.0";
  * Setup Express server based on specified config.
  * @param {Object} config - App configuration.
  * @param {string} [config.baseUrl] - Base URL
- * @param {string} config.port - Port number for server.
+ * @param {string} config.port - Port number for server. Default 3000
  * @param {Object[]} [config.appSettings]
  * @param {string} config.appSettings[].name
  * @param {string} config.appSettings[].value
  * @param {Object[]} [config.middleware]
- * @param {string} config.middleware[].baseUrl
+ * @param {string} [config.middleware[].baseUrl]
+ * @param {string} [config.middleware[].method]
  * @param {Object} config.middleware[].middleware Express middleware
- * @param {() => Promise<any>} config.middleware[].shutdown Function to be called on shutdown
+ * @param {() => Promise<any>} [config.middleware[].shutdown] Function to be called on shutdown
  * @returns {{app:Express, server:Server<typeof IncomingMessage, typeof ServerResponse>, shutdown:() => Promise<any[]>}}
  */
 function createServer(config) {
@@ -150,7 +151,7 @@ function createServer(config) {
 
   const serverPort = Object.prototype.hasOwnProperty.call(config, "port")
     ? config.port
-    : null;
+    : 3000;
 
   const app = express();
 
@@ -171,63 +172,63 @@ function createServer(config) {
     ),
   );
 
+  let middlewareArray;
   if (middleware) {
-    const middlewareArray = !Array.isArray(middleware)
-      ? [middleware]
-      : middleware;
+    middlewareArray = !Array.isArray(middleware) ? [middleware] : middleware;
 
     middlewareArray.forEach((mid) => {
-      let targetMiddlewareMethod = "use";
-      if (Object.prototype.hasOwnProperty.call(mid, "method")) {
-        // https://expressjs.com/en/4x/api.html#app.METHOD
-        switch (mid.method.toLowerCase()) {
-          case "all":
-          case "checkout":
-          case "copy":
-          case "delete":
-          case "get":
-          case "head":
-          case "lock":
-          case "merge":
-          case "mkactivity":
-          case "mkcol":
-          case "move":
-          case "m-search":
-          case "notify":
-          case "options":
-          case "patch":
-          case "post":
-          case "purge":
-          case "put":
-          case "report":
-          case "search":
-          case "subscribe":
-          case "trace":
-          case "unlock":
-          case "unsubscribe":
-            targetMiddlewareMethod = mid.method.toLowerCase();
-            break;
+      let middlewareItem;
+      let middlewareBaseUrl = baseUrl ? baseUrl : "";
+      let middlewareMethod = "use";
 
-          default:
-            targetMiddlewareMethod = "use";
+      if (Object.prototype.hasOwnProperty.call(mid, "middleware")) {
+        middlewareItem = mid.middleware;
+
+        if (Object.prototype.hasOwnProperty.call(mid, "baseUrl")) {
+          middlewareBaseUrl += mid.baseUrl;
         }
+
+        if (Object.prototype.hasOwnProperty.call(mid, "method")) {
+          // https://expressjs.com/en/4x/api.html#app.METHOD
+          switch (mid.method.toLowerCase()) {
+            case "all":
+            case "checkout":
+            case "copy":
+            case "delete":
+            case "get":
+            case "head":
+            case "lock":
+            case "merge":
+            case "mkactivity":
+            case "mkcol":
+            case "move":
+            case "m-search":
+            case "notify":
+            case "options":
+            case "patch":
+            case "post":
+            case "purge":
+            case "put":
+            case "report":
+            case "search":
+            case "subscribe":
+            case "trace":
+            case "unlock":
+            case "unsubscribe":
+              middlewareMethod = mid.method.toLowerCase();
+              break;
+
+            default:
+              middlewareMethod = "use";
+          }
+        }
+      } else {
+        middlewareItem = mid;
       }
 
-      let targetMiddlewareBaseUrl =
-        (baseUrl ? baseUrl : "") +
-        (Object.prototype.hasOwnProperty.call(mid, "baseUrl")
-          ? mid.baseUrl
-          : "");
-      let targetMiddleware = Object.prototype.hasOwnProperty.call(
-        mid,
-        "middleware",
-      )
-        ? mid.middleware
-        : mid;
-
-      if (targetMiddlewareBaseUrl.length > 0)
-        app[targetMiddlewareMethod](targetMiddlewareBaseUrl, targetMiddleware);
-      else app[targetMiddlewareMethod](targetMiddleware);
+      if (middlewareBaseUrl.length > 0)
+        app[middlewareMethod](middlewareBaseUrl, middlewareItem);
+      else app[middlewareMethod](middlewareItem);
     });
   }
 
@@ -318,10 +319,12 @@ function createServer(config) {
         }),
       ];
 
-      if (middleware) {
+      if (middlewareArray) {
+        /*
         const middlewareArray = !Array.isArray(middleware)
           ? [middleware]
           : middleware;
+          */
 
         shutdownPromises = shutdownPromises.concat(
           middlewareArray.reduce((shutdownActions, mid) => {
