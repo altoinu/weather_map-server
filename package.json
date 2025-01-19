@@ -13,7 +13,7 @@
     "prepare": "husky install",
     "build:doc": "npm-run-all -p build:doc:*",
     "build:doc:apidoc": "apidoc -c apidoc.json -f \".*\\.js$\" -f \".*\\.mjs$\" -i src/ -o docs/apidoc",
-    "build:doc:jsdoc": "jsdoc src -P package.json -R README.md -c jsdoc.config.js -r -d docs/jsdoc"
+    "build:doc:jsdoc": "jsdoc -P package.json -R README.md -c jsdoc.config.js -r -d docs/jsdoc"
   },
   "repository": {
     "type": "git",

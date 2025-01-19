@@ -1,27 +1,7 @@
 /**
  * Express js middleware to allow CORS request on origin specified
  * @module CORS
- * @version 1.0.1 2024/12/25
- *
- * @example
- * import CORS from "./middleware/CORS.mjs";
- *
- * const cors = CORS({
- *    "origin": [
- *       "http://localhost",
- *       "http://localhost:3001",
- *       "http://www.example.com",...
- *    ]
- * });
- *
- * // or
- * const cors = CORS({
- *    "origin": [
- *       "*"
- *    ]
- * });
- *
- * app.use(cors.allow);
+ * @version 1.0.2 2025/01/19
  *
  * @todo Set requestMethod, requestHeader via corsDef too?
  */
@@ -29,9 +9,9 @@
 /**
  * Express js middleware to allow CORS request on origin specified in corsDef
  * @alias module:CORS#allow
- * @param req
- * @param res
- * @param next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
  */
 function allow(corsDef, req, res, next) {
   if (req.method == "OPTIONS") {
@@ -80,11 +60,40 @@ function allow(corsDef, req, res, next) {
 }
 
 /**
+ * @typedef {function(Request, Response, Function):void} ExpressMiddleware
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
+ */
+
+/**
+ * @function CORS
  * @param {Object} corsDef - CORS definition.
  * @param {string[]} [corsDef.origin] - CORS allowed origin domain.
- * @returns {{allow:(req:Request, res:Response, next:Function) => void}} Object {allow - expressjs middleware}
+ * @returns {{allow:ExpressMiddleware}} Object {allow - expressjs middleware}
+ *
+ * @example
+ * import CORS from "./middleware/CORS.mjs";
+ *
+ * const cors = CORS({
+ *    "origin": [
+ *       "http://localhost",
+ *       "http://localhost:3001",
+ *       "http://www.example.com",...
+ *    ]
+ * });
+ *
+ * // or
+ * const cors = CORS({
+ *    "origin": [
+ *       "*"
+ *    ]
+ * });
+ *
+ * app.use(cors.allow);
+ *
  */
-function CORS(corsDef) {
+export default function CORS(corsDef) {
   return {
     allow: allow.bind(this, corsDef),
     /*
@@ -94,5 +103,3 @@ function CORS(corsDef) {
 	 */
   };
 }
-
-export default CORS;

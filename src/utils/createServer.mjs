@@ -1,11 +1,66 @@
 /**
  * Function to create Express app and server
  * @module createServer
- * @version 2.0.0 2024-12-25
+ * @version 2.0.1 2025-01-19
  * @requires module:CONSTANTS
  * @requires module:ENV
  * @requires express
  * @requires morgan
+ */
+
+import CONSTANTS from "../constants/constants.mjs";
+import ENV from "../env.mjs";
+import express from "express";
+import morgan from "morgan";
+
+export const VERSION = "2.0.1";
+
+/*
+ * @param {Object[]} [config.appSettings]
+ * @param {string} config.appSettings[].name
+ * @param {string} config.appSettings[].value
+ * @param {Object[]} [config.middleware] Express middleware, express.Router, or object defining middleware
+ * @param {string} [config.middleware[].baseUrl]
+ * @param {string} [config.middleware[].method]
+ * @param {Object} config.middleware[].middleware Express middleware or express.Router
+ * @param {() => Promise<any>} [config.middleware[].shutdown] Function to be called on shutdown
+ */
+
+/**
+ * @typedef {Object} AppSettings
+ * @property {string} name
+ * @property {string} value
+ */
+
+/**
+ * @typedef {function(Request, Response, Function):void} ExpressMiddleware
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Function} next
+ */
+
+/**
+ * @typedef {Object} MiddlewareConfig
+ * @property {string} [baseUrl]
+ * @property {string} [method]
+ * @property {(ExpressMiddleware|express.Router)} middleware Express middleware or express.Router
+ * @property {function():Promise<any>} [shutdown] Function to be called on shutdown
+ */
+
+/**
+ * Express middleware, express.Router, or object defining middleware
+ * @typedef {(ExpressMiddleware|express.Router|MiddlewareConfig)} MiddlewareSettings
+ */
+
+/**
+ * Setup Express server based on specified config.
+ * @function createServer
+ * @param {Object} config - App configuration.
+ * @param {string} [config.baseUrl] - Base URL
+ * @param {string} [config.port=3000] - Port number for server. Default 3000
+ * @param {AppSettings[]} [config.appSettings]
+ * @param {MiddlewareSettings[]} [config.middleware]
+ * @returns {{app:Express, server:http.Server, shutdown:function():Promise<any[]>}}
  *
  * @example
  * import createServer from "./utils/createServer.mjs";
@@ -58,10 +113,10 @@
  *             console.log('shutdown for this route');
  *          }
  *       },
- *       $express.static(path.join(__dirname, '../public')),
+ *       express.static(path.join(__dirname, '../public')),
  *       {
  *          baseUrl: '/angular',
- *          middleware: $express.static(path.join(__dirname, '../my-angular-app/dist/my-angular-app'))
+ *          middleware: express.static(path.join(__dirname, '../my-angular-app/dist/my-angular-app'))
  *       },
  *       {
  *          baseUrl: '/angular/*',
@@ -74,9 +129,9 @@
  *       {
  *          baseUrl: '/react',
  *          middleware: (function() {
- *             var router = $express.Router();
+ *             var router = express.Router();
  *             var filePath = '../my-react-app/build';
- *             router.use($express.static(path.join(__dirname, filePath)));
+ *             router.use(express.static(path.join(__dirname, filePath)));
  *             router.get('/*', function(req, res) {
  *                // redirect to index.html
  *                res.sendFile(path.join(__dirname, filePath, 'index.html'));
@@ -87,45 +142,19 @@
  *       }
  *    ]
  * });
- *
- * @todo Sample TODO text
  */
-/*
- *    routesDef: RouteDefinition([
- *       path.join(__dirname, '/routes/ConfigRoute.js'),
- *       {
- *          route: express.Router() or require('...'),
- *          baseUrl: '/whatever', //optional
- *          shutdown: function() {
- *             console.log('shutdown for this route');
- *          }
- *       }
- *    ])
- */
+export default function createServer(config) {
+  const configBaseUrl = Object.prototype.hasOwnProperty.call(config, "baseUrl")
+    ? config.baseUrl
+    : null;
+  const baseUrl = configBaseUrl
+    ? (configBaseUrl.charAt(0) != "/" ? "/" : "") + configBaseUrl
+    : null;
 
-import CONSTANTS from "../constants/constants.mjs";
-import ENV from "../env.mjs";
-import express from "express";
-import morgan from "morgan";
+  const serverPort = Object.prototype.hasOwnProperty.call(config, "port")
+    ? config.port
+    : 3000;
 
-export const VERSION = "2.0.0";
-
-/**
- * Setup Express server based on specified config.
- * @param {Object} config - App configuration.
- * @param {string} [config.baseUrl] - Base URL
- * @param {string} config.port - Port number for server. Default 3000
- * @param {Object[]} [config.appSettings]
- * @param {string} config.appSettings[].name
- * @param {string} config.appSettings[].value
- * @param {Object[]} [config.middleware]
- * @param {string} [config.middleware[].baseUrl]
- * @param {string} [config.middleware[].method]
- * @param {Object} config.middleware[].middleware Express middleware
- * @param {() => Promise<any>} [config.middleware[].shutdown] Function to be called on shutdown
- * @returns {{app:Express, server:Server<typeof IncomingMessage, typeof ServerResponse>, shutdown:() => Promise<any[]>}}
- */
-function createServer(config) {
   const appSettings = Object.prototype.hasOwnProperty.call(
     config,
     "appSettings",
@@ -141,17 +170,6 @@ function createServer(config) {
   const routesDef = Object.prototype.hasOwnProperty.call(config, "routesDef")
     ? config.routesDef
     : null;
-
-  const configBaseUrl = Object.prototype.hasOwnProperty.call(config, "baseUrl")
-    ? config.baseUrl
-    : null;
-  const baseUrl = configBaseUrl
-    ? (configBaseUrl.charAt(0) != "/" ? "/" : "") + configBaseUrl
-    : null;
-
-  const serverPort = Object.prototype.hasOwnProperty.call(config, "port")
-    ? config.port
-    : 3000;
 
   const app = express();
 
@@ -232,7 +250,19 @@ function createServer(config) {
     });
   }
 
+  /*
   // DEPRECATED - routesDef
+  routesDef: RouteDefinition([
+     path.join(__dirname, '/routes/ConfigRoute.js'),
+     {
+        route: express.Router() or require('...'),
+        baseUrl: '/whatever', //optional
+        shutdown: function() {
+           console.log('shutdown for this route');
+        }
+     }
+  ])
+  */
   if (routesDef) {
     // If path specified, mount routes to there [baseUrl]/[routesDef routes]...
     // (ex baseUrl == /api then /api/[routesDef routes]...
@@ -347,5 +377,3 @@ function createServer(config) {
     },
   };
 }
-
-export default createServer;
