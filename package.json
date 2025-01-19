@@ -5,6 +5,7 @@
   "private": true,
   "main": "src/index.mjs",
   "scripts": {
+    "dev": "node src/index.mjs",
     "eslint": "eslint src",
     "prettier": "prettier --write \"**/*.{md,css,js,cjs,mjs}\"",
     "lint:fix": "npm-run-all prettier eslint",

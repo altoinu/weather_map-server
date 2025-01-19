@@ -32,10 +32,10 @@ PORT=4000
 OPEN_WEATHER_MAP_API_KEY=XXXXXX
 ```
 
-## To run
+## To run (for development)
 
 ```
-node src/index.mjs
+npm run dev
 ```
 
 ...then try accessing one of defined routes:
