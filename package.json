@@ -1,6 +1,6 @@
 {
   "name": "weather_map-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detroit Labs coding challenge - simple weather forecast application. Backend Node.js server",
   "private": true,
   "main": "src/index.mjs",
