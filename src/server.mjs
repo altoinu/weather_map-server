@@ -2,7 +2,7 @@ import ENV from "./env.mjs";
 import CORS from "./middleware/CORS.mjs";
 import configRoute from "./routes/configRoute.mjs";
 import openWeatherMapRouter from "./routes/openWeatherMap.mjs";
-import createServer from "./utils/createServer.mjs";
+import createExpressApp from "./utils/createExpressApp.mjs";
 import bodyParser from "body-parser";
 import cluster from "cluster";
 import os from "os";
@@ -39,14 +39,15 @@ function normalizePort(val) {
   return false;
 }
 
-const port = normalizePort(ENV.port);
+let port = normalizePort(ENV.port);
+if (!port) port = 3000;
+
 const cors = CORS({
   origin: ENV.corsAllowOrigin,
 });
 
-function createAndStartServer() {
-  return createServer({
-    port: port,
+function create() {
+  return createExpressApp({
     appSettings: [
       {
         name: "view engine",
@@ -80,15 +81,51 @@ function createAndStartServer() {
 }
 
 function server() {
+  let appObj;
   let shutdown;
+  let server;
+
   return {
     start: () => {
-      const appObj = createAndStartServer();
-      shutdown = appObj.shutdown;
+      if (!appObj) {
+        appObj = create();
+        const app = appObj.app;
+        shutdown = appObj.shutdown;
+
+        server = app.listen(port, () => {
+          const address = server.address().address;
+          const port = server.address().port;
+
+          console.log("address:" + address);
+          console.log("listening at port:" + port);
+        });
+      }
+
       return appObj;
     },
+
     shutdown: () => {
-      return shutdown();
+      const shutdownPromises = [];
+
+      if (appObj) {
+        if (server) {
+          shutdownPromises.push(
+            new Promise((resolve) => {
+              server.close(() => {
+                resolve();
+              });
+            }),
+          );
+        }
+
+        shutdownPromises.push(shutdown());
+
+        appObj = null;
+        shutdown = null;
+        server = null;
+      }
+
+      return Promise.allSettled(shutdownPromises);
     },
   };
 }

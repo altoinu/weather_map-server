@@ -1,6 +1,6 @@
 /**
- * Function to create Express app and server
- * @module createServer
+ * Function to create Express app
+ * @module createExpressApp
  * @version 2.0.1 2025-01-19
  * @requires module:CONSTANTS
  * @requires module:ENV
@@ -53,17 +53,16 @@ export const VERSION = "2.0.1";
  */
 
 /**
- * Setup Express server based on specified config.
- * @function createServer
+ * Setup Express app based on specified config.
+ * @function createExpressApp
  * @param {Object} config - App configuration.
  * @param {string} [config.baseUrl] - Base URL
- * @param {string} [config.port=3000] - Port number for server. Default 3000
  * @param {AppSettings[]} [config.appSettings]
  * @param {MiddlewareSettings[]} [config.middleware]
  * @returns {{app:Express, server:http.Server, shutdown:function():Promise<any[]>}}
  *
  * @example
- * import createServer from "./utils/createServer.mjs";
+ * import createExpressApp from "./utils/createExpressApp.mjs";
  * import express from "express";
  *
  * const configRoute = express.Router();
@@ -83,9 +82,8 @@ export const VERSION = "2.0.1";
  *   else res.json(configValues);
  * });
  *
- * const app = createServer({
+ * const app = createExpressApp({
  *    baseUrl: '/some/base/path',
- *    port: 3000,
  *    appSettings: [
  *       {
  *          name: 'view engine',
@@ -143,17 +141,13 @@ export const VERSION = "2.0.1";
  *    ]
  * });
  */
-export default function createServer(config) {
+export default function createExpressApp(config) {
   const configBaseUrl = Object.prototype.hasOwnProperty.call(config, "baseUrl")
     ? config.baseUrl
     : null;
   const baseUrl = configBaseUrl
     ? (configBaseUrl.charAt(0) != "/" ? "/" : "") + configBaseUrl
     : null;
-
-  const serverPort = Object.prototype.hasOwnProperty.call(config, "port")
-    ? config.port
-    : 3000;
 
   const appSettings = Object.prototype.hasOwnProperty.call(
     config,
@@ -329,25 +323,10 @@ export default function createServer(config) {
     res.render("error", createErrorReturnObj(err));
   });
 
-  const server = app.listen(serverPort, () => {
-    const address = server.address().address;
-    const port = server.address().port;
-
-    console.log("address:" + address);
-    console.log("listening at port:" + port);
-  });
-
   return {
     app: app,
-    server: server,
     shutdown: () => {
-      let shutdownPromises = [
-        new Promise((resolve) => {
-          server.close(() => {
-            resolve();
-          });
-        }),
-      ];
+      let shutdownPromises = [];
 
       if (middlewareArray) {
         /*
