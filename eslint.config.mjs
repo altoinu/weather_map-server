@@ -8,17 +8,10 @@ const eslintConfig = [
   {
     files: ["**/*.{js,cjs,mjs}"],
     ignores: ["node_modules", "build", "*.css"],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-    },
-    plugins: {
-      jest: eslintPluginJest,
-    },
+    languageOptions: { globals: globals.node },
   },
   pluginJs.configs.recommended,
+  eslintPluginJest.configs["flat/recommended"],
   eslintConfigPrettier,
 ];
 
