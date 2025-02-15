@@ -1,5 +1,7 @@
 // babel.config.js
 module.exports = {
-  // https://medium.com/trabe/testing-css-modules-in-react-components-with-jest-enzyme-and-a-custom-modulenamemapper-8ff86c7d18a2
+  // https://jenchan.biz/blog/dissecting-the-hell-jest-setup-esm-typescript-setup
+  // https://jestjs.io/docs/getting-started#generate-a-basic-configuration-file
+  // https://jestjs.io/docs/getting-started#using-babel
   presets: [["@babel/preset-env", { targets: { node: "current" } }]],
 };
