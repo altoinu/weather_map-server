@@ -1,13 +1,6 @@
 /**
- * Express js middleware to allow CORS request on origin specified
- * @module CORS
- * @version 1.0.2 2025/01/19
- *
- * @todo Set requestMethod, requestHeader via corsDef too?
- */
-
-/**
  * Express js middleware to allow CORS request on origin specified in corsDef
+ * @memberof module:CORS
  * @alias module:CORS#allow
  * @param {Request} req
  * @param {Response} res
@@ -61,17 +54,20 @@ function allow(corsDef, req, res, next) {
 
 /**
  * @typedef {function(Request, Response, Function):void} ExpressMiddleware
+ * @memberof module:CORS
+ * @alias module:CORS.ExpressMiddleware
  * @param {Request} req
  * @param {Response} res
  * @param {Function} next
  */
 
 /**
- * @function CORS
+ * Express js middleware to allow CORS request on origin specified
+ * @module CORS
+ * @version 1.0.3 2025/02/16
  * @param {Object} corsDef - CORS definition.
  * @param {string[]} [corsDef.origin] - CORS allowed origin domain.
  * @returns {{allow:ExpressMiddleware}} Object {allow - expressjs middleware}
- *
  * @example
  * import CORS from "./middleware/CORS.mjs";
  *
@@ -92,8 +88,9 @@ function allow(corsDef, req, res, next) {
  *
  * app.use(cors.allow);
  *
+ * @todo Set requestMethod, requestHeader via corsDef too?
  */
-export default function CORS(corsDef) {
+function CORS(corsDef) {
   return {
     allow: allow.bind(this, corsDef),
     /*
@@ -103,3 +100,5 @@ export default function CORS(corsDef) {
 	 */
   };
 }
+
+export default CORS;
