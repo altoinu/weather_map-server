@@ -1,13 +1,3 @@
-/**
- * Function to create Express app
- * @module createExpressApp
- * @version 2.0.1 2025-01-19
- * @requires module:CONSTANTS
- * @requires module:ENV
- * @requires express
- * @requires morgan
- */
-
 import CONSTANTS from "../constants/constants.mjs";
 import ENV from "../env.mjs";
 import express from "express";
@@ -28,12 +18,16 @@ export const VERSION = "2.0.1";
 
 /**
  * @typedef {Object} AppSettings
+ * @memberof module:createExpressApp
+ * @alias module:createExpressApp.AppSettings
  * @property {string} name
  * @property {string} value
  */
 
 /**
  * @typedef {function(Request, Response, Function):void} ExpressMiddleware
+ * @memberof module:createExpressApp
+ * @alias module:createExpressApp.ExpressMiddleware
  * @param {Request} req
  * @param {Response} res
  * @param {Function} next
@@ -41,6 +35,8 @@ export const VERSION = "2.0.1";
 
 /**
  * @typedef {Object} MiddlewareConfig
+ * @memberof module:createExpressApp
+ * @alias module:createExpressApp.MiddlewareConfig
  * @property {string} [baseUrl]
  * @property {string} [method]
  * @property {(ExpressMiddleware|express.Router)} middleware Express middleware or express.Router
@@ -50,11 +46,18 @@ export const VERSION = "2.0.1";
 /**
  * Express middleware, express.Router, or object defining middleware
  * @typedef {(ExpressMiddleware|express.Router|MiddlewareConfig)} MiddlewareSettings
+ * @memberof module:createExpressApp
+ * @alias module:createExpressApp.MiddlewareSettings
  */
 
 /**
  * Setup Express app based on specified config.
- * @function createExpressApp
+ * @module createExpressApp
+ * @version 2.0.2 2025/02/16
+ * @requires module:CONSTANTS
+ * @requires module:ENV
+ * @requires express
+ * @requires morgan
  * @param {Object} config - App configuration.
  * @param {string} [config.baseUrl] - Base URL
  * @param {AppSettings[]} [config.appSettings]
@@ -141,7 +144,7 @@ export const VERSION = "2.0.1";
  *    ]
  * });
  */
-export default function createExpressApp(config) {
+function createExpressApp(config) {
   const configBaseUrl = Object.prototype.hasOwnProperty.call(config, "baseUrl")
     ? config.baseUrl
     : null;
@@ -356,3 +359,5 @@ export default function createExpressApp(config) {
     },
   };
 }
+
+export default createExpressApp;
