@@ -3,7 +3,7 @@ import ENV from "../env.mjs";
 import express from "express";
 import morgan from "morgan";
 
-export const VERSION = "2.0.1";
+export const VERSION = "2.0.3";
 
 /*
  * @param {Object[]} [config.appSettings]
@@ -51,18 +51,27 @@ export const VERSION = "2.0.1";
  */
 
 /**
+ * @typedef {Object} CreateExpressAppReturnObj
+ * @memberof module:createExpressApp
+ * @alias module:createExpressApp.CreateExpressAppReturnObj
+ * @property {Express} app
+ * @property {function():Promise<any[]>} shutdown Calls "shutdown" function on
+ * each defined <code>MiddlewareConfig</code>. Returns Promise<any[]>
+ */
+
+/**
  * Setup Express app based on specified config.
  * @module createExpressApp
- * @version 2.0.2 2025/02/16
+ * @version 2.0.3 2025/03/25
  * @requires module:CONSTANTS
  * @requires module:ENV
  * @requires express
  * @requires morgan
- * @param {Object} config - App configuration.
+ * @param {Object} config - App configuration
  * @param {string} [config.baseUrl] - Base URL
  * @param {AppSettings[]} [config.appSettings]
  * @param {MiddlewareSettings[]} [config.middleware]
- * @returns {{app:Express, server:http.Server, shutdown:function():Promise<any[]>}}
+ * @returns {CreateExpressAppReturnObj}
  *
  * @example
  * import createExpressApp from "./utils/createExpressApp.mjs";
